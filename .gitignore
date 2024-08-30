@@ -1,5 +1,7 @@
 # Ignore the node_modules directory
 node_modules/
+playwright-report/
+test-results/
 
 # Ignore all .env files
 .env
