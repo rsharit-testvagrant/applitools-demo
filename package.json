@@ -1,0 +1,17 @@
+{
+  "name": "applitools-tv",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "npx playwright test --project chromium --headed"
+  },
+  "keywords": [],
+  "author": "TestVagrant",
+  "license": "ISC",
+  "devDependencies": {
+    "@playwright/test": "^1.46.1",
+    "@types/node": "^22.5.1",
+    "@applitools/eyes-playwright": "^1.28.2"
+  }
+}
