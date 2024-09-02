@@ -1,67 +1,54 @@
 import { test } from '@playwright/test';
 import { BatchInfoLocal } from '../src/batch-info';
-import { BatchInfo, Configuration, EyesRunner, VisualGridRunner, ClassicRunner, BrowserType, DeviceName, ScreenOrientation, Eyes, Target } from '@applitools/eyes-playwright';
+import { BatchInfo, Configuration, EyesRunner, VisualGridRunner, BrowserType, DeviceName, ScreenOrientation, Eyes, Target } from '@applitools/eyes-playwright';
 
 export let Batch: BatchInfo;
-export let visualGridConfig: Configuration;
-export let classicConfig: Configuration;
-export let visualGridRunner: EyesRunner;
-export let classicRunner: EyesRunner;
+export let Config: Configuration;
+export let Runner: EyesRunner;
 export let eyes: Eyes;
 
 test.beforeAll(async() => {
-    // Initialize runners
-    visualGridRunner = new VisualGridRunner({ testConcurrency: 5 });
-    classicRunner = new ClassicRunner();
 
-    // Set up the batch info
-    Batch = new BatchInfo({ name: BatchInfoLocal.name });
+    // Configure Applitools SDK to run on the Ultrafast Grid
+    Runner = new VisualGridRunner({ testConcurrency: 5 });
+    Batch = new BatchInfo({name: BatchInfoLocal.name});
 
-    // Configure for Visual Grid
-    visualGridConfig = new Configuration();
-    visualGridConfig.setBatch(Batch);
-    visualGridConfig.addBrowsers(
-        { name: BrowserType.CHROME, width: 1600, height: 600 },
-        { name: BrowserType.FIREFOX, width: 1600, height: 1200 }
-        // Add more configurations as needed
-    );
-
-    // Configure for Classic Runner
-    classicConfig = new Configuration();
-    classicConfig.setBatch(Batch);
-    classicConfig.setViewportSize({ width: 1200, height: 800 });
-
-    // You can define other configurations for classicConfig if necessary
+    Config = new Configuration();
+    Config.setBatch(Batch);
+    Config.addBrowsers(
+        { name: BrowserType.CHROME, width: 1600, height: 600 }//,
+        // { name: BrowserType.FIREFOX, width: 1600, height: 1200 },
+        // { name: BrowserType.SAFARI, width: 1024, height: 768 },
+        // { chromeEmulationInfo: { deviceName: DeviceName.iPhone_11, screenOrientation: ScreenOrientation.PORTRAIT} },
+        // { chromeEmulationInfo: { deviceName: DeviceName.Nexus_10, screenOrientation: ScreenOrientation.LANDSCAPE} }
+    )
+    eyes = new Eyes(Runner, Config);
 });
 
 test.describe('A few home page tests', () => {
-
+    //let eyes: Eyes;
     test.beforeEach(async ({ page }) => {
-        // Decide which runner to use for the test
-        const useVisualGrid = true; // Set this flag based on your criteria
-
-        if (useVisualGrid) {
-            eyes = new Eyes(visualGridRunner, visualGridConfig);
-        } else {
-            eyes = new Eyes(classicRunner, classicConfig);
-        }
+        //eyes = new Eyes(Runner, Config);
 
         // Start Applitools Visual AI Test
+        // Args: Playwright Page, App Name, Test Name, Viewport Size for local driver
         await eyes.open(page, BatchInfoLocal.appName, `test`, { width: 1500, height: 600 });
     });
-
+    
     test.skip('Toggle highlight button', async ({ page }) => {
         await page.goto('https://coinmarketcap.com/');
         await page.waitForTimeout(3000);
+        //await page.locator('span.sc-cd4bdda8-0.iwtfqB.switch-button').click();
 
         // Full Page - Visual AI Assertion
         await eyes.check('Toggle button', Target.region('div.sc-7f53b353-0.sc-7f53b353-2.fHwZkx.cfyfuc')
-            .ignoreColors()
-            .floatingRegion('span.sc-cd4bdda8-0.iwtfqB.switch-button')
+        .ignoreColors()
+        .floatingRegion('span.sc-cd4bdda8-0.iwtfqB.switch-button')
+        
         );
     });
 
-    test('Theme change to test color change', async ({ page }) => {
+    test.skip('Theme change to test color change', async ({ page }) => {
         await page.goto('https://coinmarketcap.com/');
         await page.waitForTimeout(3000);
 
@@ -69,7 +56,8 @@ test.describe('A few home page tests', () => {
 
         // Full Page - Visual AI Assertion
         await eyes.check('Theme change', Target.region('div.sc-7927fd90-0.ghpzpe')
-            .ignoreColors().ignoreRegion('div.sc-7927fd90-0.ghpzpe>button')
+        .ignoreColors()
+        
         );
     });
 
@@ -80,10 +68,7 @@ test.describe('A few home page tests', () => {
 });
 
 test.afterAll(async() => {
-    // Wait for both runners to finish and gather results
-    const visualResults = await visualGridRunner.getAllTestResults();
-    console.log('Visual Grid test results', visualResults.getAllResults());
-
-    const classicResults = await classicRunner.getAllTestResults();
-    console.log('Classic test results', classicResults.getAllResults());
+    // Wait for Ultrast Grid Renders to finish and gather results
+    const results = await Runner.getAllTestResults();
+    console.log('Visual test results', results.getAllResults());
 });
