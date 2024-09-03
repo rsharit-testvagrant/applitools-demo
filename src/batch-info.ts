@@ -1,4 +1,4 @@
 export const BatchInfoLocal = {
-    name : "Overall Test Suite Name",
+    name : "Applitools demo",
     appName: "CoinMarketCap"
 }
