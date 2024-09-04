@@ -25,7 +25,7 @@ test.describe('This test is to demonstrate the ignore a particular region consid
     // AT link mismatch - https://eyes.applitools.com/app/test-results/00000251676869575838/?accountId=l9D0456laE6IwyZgopBlJg__
     test('Test to demonstrate ignore region', async ({ page }) => {
         await page.goto('https://coinmarketcap.com/currencies/sui/');
-        await page.waitForTimeout(10000);
+        await page.waitForTimeout(1000);
 
         // asking eyes to ignore the region while comparing with the baseline
         await eyes.check('Test to demonstrate ignore region', Target.region('[data-test="section-chart"]')
