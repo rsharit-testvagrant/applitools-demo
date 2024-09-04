@@ -10,47 +10,39 @@ export let eyes: Eyes;
 
 test.beforeAll(async() => {
 
-    // Configure Applitools SDK to run on the Ultrafast Grid
-    Runner = new VisualGridRunner({ testConcurrency: 5 });
-    //Batch = new BatchInfo({name: BatchInfoLocal.name});
-
+    Runner = new ClassicRunner();
     Config = new Configuration();
-    //Config.setBatch(Batch);
-
-    Config.addBrowsers(
-        { name: BrowserType.CHROME, width: 1600, height: 600 }
-    )
     eyes = new Eyes(Runner, Config);
 });
 
-test.describe('Test to demonstrate ignore color & text during comparision', () => {
-    //let eyes: Eyes;
+/**
+ * https://applitools.com/docs/api-ref/sdk-api/playwright/javascript/matchlevel
+ */
+test.describe('This test is to demonstrate ignore color differences.', () => {
+
     test.beforeEach(async ({ page }) => {
-        await eyes.open(page, BatchInfoLocal.appName, `Test to demonstrate ignore color & text during comparision`, { width: 1500, height: 600 });
+        await eyes.open(page, BatchInfoLocal.appName, `Test to demonstrate ignore color`);
     });
     
 
-    test('Ignore color differences', async ({ page }) => {
+    // applitool link - https://eyes.applitools.com/app/test-results/00000251676950404342/?accountId=l9D0456laE6IwyZgopBlJg__
+    test('Ignore color match test', async ({ page }) => {
         await page.goto('https://coinmarketcap.com/');
         await page.waitForTimeout(3000);
 
-        //await page.locator('span.icon-Moon').click();
-
-        // Full Page - Visual AI Assertion
-        await eyes.check('Ignore color differences', Target.region('div.sc-7927fd90-0.ghpzpe')
+        // asking eyes to ignore the color differences
+        await eyes.check('Test to demonstrate ignore color', Target.region('div.sc-a27793cf-2.eNKAqm')
         .ignoreColors()
         
         );
     });
 
     test.afterEach(async () => {
-        // End Applitools Visual AI Test
         await eyes.closeAsync();
     });
 });
 
 test.afterAll(async() => {
-    // Wait for Ultrast Grid Renders to finish and gather results
     const results = await Runner.getAllTestResults();
     console.log('Visual test results', results.getAllResults());
 });

@@ -10,42 +10,34 @@ export let eyes: Eyes;
 
 test.beforeAll(async() => {
 
-    // Configure Applitools SDK to run on the Ultrafast Grid
-    Runner = new VisualGridRunner({ testConcurrency: 5 });
-    //Batch = new BatchInfo({name: BatchInfoLocal.name});
-    //Batch.setId(generateUUID());
-
+    Runner = new ClassicRunner();
     Config = new Configuration();
-    //Config.setBatch(Batch);
-
-    Config.addBrowsers(
-        { name: BrowserType.CHROME, width: 1600, height: 600 }
-    )
     eyes = new Eyes(Runner, Config);
 });
 
-test.describe('Test to demonstrate ignore color & text during comparision', () => {
-    //let eyes: Eyes;
+/**
+ * https://applitools.com/docs/api-ref/sdk-api/playwright/javascript/matchlevel
+ */
+test.describe('this test is to demonstrate match type of layout applied on the page. It checks for various elements, ' + 
+    'checks for their relative positions to each other.', () => {
     test.beforeEach(async ({ page }) => {
-        await eyes.open(page, BatchInfoLocal.appName, `Test to demonstrate ignore color & text during comparision`, { width: 1500, height: 600 });
+        await eyes.open(page, BatchInfoLocal.appName, `Test to demonstrate layout match`);
     });
     
 
-    // test('Ignore color differences', async ({ page }) => {
-    //     await page.goto('https://coinmarketcap.com/');
-    //     await page.waitForTimeout(3000);
+    // AT link match- https://eyes.applitools.com/app/test-results/00000251676931231291/?accountId=l9D0456laE6IwyZgopBlJg__
+    // AT link  yet to be resolved - https://eyes.applitools.com/app/test-results/00000251676931163592/?accountId=l9D0456laE6IwyZgopBlJg__
+    test('Layout match test', async ({ page }) => {
+        await page.goto('https://coinmarketcap.com/');
+        await page.waitForTimeout(3000);
 
-    //     //await page.locator('span.icon-Moon').click();
-
-    //     // Full Page - Visual AI Assertion
-    //     await eyes.check('Ignore color differences', Target.region('div.sc-7927fd90-0.ghpzpe')
-    //     .ignoreColors()
-        
-    //     );
-    // });
+        // asking eyes to check for layout of the page
+        await eyes.check('Test to demonstrate layout match', Target.window()
+        .layout()
+        );
+    });
 
     test.afterEach(async () => {
-        // End Applitools Visual AI Test
         await eyes.closeAsync();
     });
 });

@@ -10,42 +10,33 @@ export let eyes: Eyes;
 
 test.beforeAll(async() => {
 
-    // Configure Applitools SDK to run on the Ultrafast Grid
-    Runner = new VisualGridRunner({ testConcurrency: 5 });
-    //Batch = new BatchInfo({name: BatchInfoLocal.name});
-    //Batch.setId(generateUUID());
-
+    Runner = new ClassicRunner();
     Config = new Configuration();
-    //Config.setBatch(Batch);
-
-    Config.addBrowsers(
-        { name: BrowserType.CHROME, width: 1600, height: 600 }
-    )
     eyes = new Eyes(Runner, Config);
 });
 
-test.describe('Test to demonstrate ignore color & text during comparision', () => {
-    //let eyes: Eyes;
+/**
+ * https://applitools.com/docs/api-ref/sdk-api/playwright/javascript/checksettings#layoutregions-method
+ */
+test.describe('This test is to demonstrate layout region capability. ' + 
+    'This ensures layout functionality within a particular element of the page.', () => {
     test.beforeEach(async ({ page }) => {
-        await eyes.open(page, BatchInfoLocal.appName, `Test to demonstrate ignore color & text during comparision`, { width: 1500, height: 600 });
+        await eyes.open(page, BatchInfoLocal.appName, `Test to demonstrate Layout Region`);
     });
     
 
-    // test('Ignore color differences', async ({ page }) => {
-    //     await page.goto('https://coinmarketcap.com/');
-    //     await page.waitForTimeout(3000);
+    test('Test to demonstrate Layout Region', async ({ page }) => {
+        await page.goto('https://coinmarketcap.com/');
+        await page.waitForTimeout(10000);
 
-    //     //await page.locator('span.icon-Moon').click();
-
-    //     // Full Page - Visual AI Assertion
-    //     await eyes.check('Ignore color differences', Target.region('div.sc-7927fd90-0.ghpzpe')
-    //     .ignoreColors()
-        
-    //     );
-    // });
+        // asking the eye to check the layout of given region
+        await eyes.check('Test to demonstrate Layout Region', Target.window()
+        .layoutRegion('div.sc-c50d2aab-9.sc-c50d2aab-12.glmmxK.jpSSgp')
+        .layout()
+        );
+    });
 
     test.afterEach(async () => {
-        // End Applitools Visual AI Test
         await eyes.closeAsync();
     });
 });
