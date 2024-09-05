@@ -9,49 +9,37 @@ export let Runner: EyesRunner;
 export let eyes: Eyes;
 
 test.beforeAll(async() => {
-
-    // Configure Applitools SDK to run on the Ultrafast Grid
-    Runner = new VisualGridRunner({ testConcurrency: 5 });
-    //Batch = new BatchInfo({name: BatchInfoLocal.name});
-    //Batch.setId(generateUUID());
-
+    process.env.APPLITOOLS_API_KEY = 'WPn4qfQxOcBknA111YGDB1i8CIftXGKDnmUDmgSlcbsHc110';
+    Runner = new ClassicRunner();
     Config = new Configuration();
-    //Config.setBatch(Batch);
-
-    Config.addBrowsers(
-        { name: BrowserType.CHROME, width: 1600, height: 600 }
-    )
     eyes = new Eyes(Runner, Config);
 });
 
-test.describe('Test to demonstrate ignore color & text during comparision', () => {
-    //let eyes: Eyes;
-    test.beforeEach(async ({ page }) => {
-        await eyes.open(page, BatchInfoLocal.appName, `Test to demonstrate ignore color & text during comparision`, { width: 1500, height: 600 });
+    test.describe('Content region A few home page tests', () => {
+        test.beforeEach(async ({ page }) => {
+            await eyes.open(page, BatchInfoLocal.appName, `Test to demonstrate content region`);
+        });
+
+/*  https://ultimateqa.com/applitools-ignore-regions-2/
+    AT Link Mismatch - https://eyes.applitools.com/app/test-results/00000251676821257211/?accountId=l9D0456laE6IwyZgopBlJg__
+*/
+    test('Test to demonstrate Content Region', async ({ page }) => {
+        await page.goto('https://coinmarketcap.com/');
+        await page.waitForTimeout(3000);
+
+        // asking eyes to focus on particular region while comparing with the baseline
+        await eyes.check('Test to demonstrate Content Region', 
+            Target.window()
+                .contentRegion('h1>span[dir="auto"]') 
+        );
     });
-    
-
-    // test('Ignore color differences', async ({ page }) => {
-    //     await page.goto('https://coinmarketcap.com/');
-    //     await page.waitForTimeout(3000);
-
-    //     //await page.locator('span.icon-Moon').click();
-
-    //     // Full Page - Visual AI Assertion
-    //     await eyes.check('Ignore color differences', Target.region('div.sc-7927fd90-0.ghpzpe')
-    //     .ignoreColors()
-        
-    //     );
-    // });
 
     test.afterEach(async () => {
-        // End Applitools Visual AI Test
         await eyes.closeAsync();
     });
 });
 
 test.afterAll(async() => {
-    // Wait for Ultrast Grid Renders to finish and gather results
     const results = await Runner.getAllTestResults();
     console.log('Visual test results', results.getAllResults());
 });

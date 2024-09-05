@@ -9,39 +9,42 @@ export let Runner: EyesRunner;
 export let eyes: Eyes;
 
 test.beforeAll(async() => {
-
-    // Configure Applitools SDK to run on the Ultrafast Grid
-    Runner = new VisualGridRunner({ testConcurrency: 5 });
-    //Batch = new BatchInfo({name: BatchInfoLocal.name});
-
+    process.env.APPLITOOLS_API_KEY = 'WPn4qfQxOcBknA111YGDB1i8CIftXGKDnmUDmgSlcbsHc110';
+    Runner = new ClassicRunner();
     Config = new Configuration();
-    //Config.setBatch(Batch);
-
-    Config.addBrowsers(
-        { name: BrowserType.CHROME, width: 1600, height: 600 }
-    )
     eyes = new Eyes(Runner, Config);
 });
 
-test.describe('Test to demonstrate ignore color & text during comparision', () => {
-    //let eyes: Eyes;
+test.describe('Exact match case - Bank Dashboard Visual Tests', () => {
     test.beforeEach(async ({ page }) => {
-        await eyes.open(page, BatchInfoLocal.appName, `Test to demonstrate ignore color & text during comparision`, { width: 1500, height: 600 });
+        // Open Eyes for the test
+        await eyes.open(page, BatchInfoLocal.appName, `Bank Dashboard Exact Match Test`);
     });
-    
+    /*
+    AT Link Match - https://eyes.applitools.com/app/test-results/00000251676821522068/?accountId=l9D0456laE6IwyZgopBlJg__
+    */
+    test('Negative: Exact Match Test - Bank Dashboard', async ({ page }) => {
+        await page.goto('https://sandbox.applitools.com/bank/dashboard?layoutAlgo=true');
+        await page.waitForTimeout(3000);
 
-    // test('Ignore color differences', async ({ page }) => {
-    //     await page.goto('https://coinmarketcap.com/');
-    //     await page.waitForTimeout(3000);
+        // Perform visual check with Exact Match Level on the whole page
+        await eyes.check('Bank Dashboard - Exact Match', 
+            Target.window().fully().exact() // Exact match level
+        );
+    });
 
-    //     //await page.locator('span.icon-Moon').click();
+    /*
+    AT Link Match - https://eyes.applitools.com/app/test-results/00000251676822103766/?accountId=l9D0456laE6IwyZgopBlJg__
+    */
+    test.skip('Positive: Exact Match Test - Dashboard Overview Header', async ({ page }) => {
+        await page.goto('https://sandbox.applitools.com/bank/dashboard?layoutAlgo=true');
+        await page.waitForTimeout(3000);
 
-    //     // Full Page - Visual AI Assertion
-    //     await eyes.check('Ignore color differences', Target.region('div.sc-7927fd90-0.ghpzpe')
-    //     .ignoreColors()
-        
-    //     );
-    // });
+        // Perform visual check with Exact Match Level on the specific section
+        await eyes.check('Dashboard Overview Header - Exact Match', 
+            Target.region('.dashboardOverview_warning__Nxry8 span').exact() 
+        );
+    });
 
     test.afterEach(async () => {
         // End Applitools Visual AI Test
@@ -50,7 +53,6 @@ test.describe('Test to demonstrate ignore color & text during comparision', () =
 });
 
 test.afterAll(async() => {
-    // Wait for Ultrast Grid Renders to finish and gather results
     const results = await Runner.getAllTestResults();
     console.log('Visual test results', results.getAllResults());
 });
