@@ -1,5 +1,5 @@
 import { test } from '@playwright/test';
-import { BatchInfoLocal } from '../src/batch-info';
+import { ApplitoolsConfig, BatchInfoLocal } from '../src/batch-info';
 import { BatchInfo, Configuration, EyesRunner, FloatingMatchSettings, Region,VisualGridRunner, BrowserType, DeviceName, ScreenOrientation, Eyes, Target, ClassicRunner } from '@applitools/eyes-playwright';
 import { generateUUID } from '../src/utils/uuid';
 
@@ -9,7 +9,8 @@ export let Runner: EyesRunner;
 export let eyes: Eyes;
 
 test.beforeAll(async() => {
-    process.env.APPLITOOLS_API_KEY = 'WPn4qfQxOcBknA111YGDB1i8CIftXGKDnmUDmgSlcbsHc110';
+    process.env.APPLITOOLS_API_KEY = ApplitoolsConfig.APPLITOOLS_API_KEY;
+    process.env.APPLITOOLS_SERVER_URL = ApplitoolsConfig.APPLITOOLS_SERVER_URL;
     Runner = new ClassicRunner();
     Config = new Configuration();
     eyes = new Eyes(Runner, Config);
@@ -26,6 +27,7 @@ test.describe('This test is to demonstrate floating region', () => {
 
       test('Demonstrate Floating Region', async ({ page }) => {
         await page.goto('http://sandbox.applitools.com/bank?floatRegion=true');
+        await page.waitForTimeout(20000);
 
         await eyes.check('Demonstrate Floating Region', 
             Target

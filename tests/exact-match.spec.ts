@@ -1,5 +1,5 @@
 import { test } from '@playwright/test';
-import { BatchInfoLocal } from '../src/batch-info';
+import { BatchInfoLocal, ApplitoolsConfig } from '../src/batch-info';
 import { BatchInfo, Configuration, EyesRunner, VisualGridRunner, BrowserType, DeviceName, ScreenOrientation, Eyes, Target, ClassicRunner } from '@applitools/eyes-playwright';
 import { generateUUID } from '../src/utils/uuid';
 
@@ -9,7 +9,9 @@ export let Runner: EyesRunner;
 export let eyes: Eyes;
 
 test.beforeAll(async() => {
-    process.env.APPLITOOLS_API_KEY = 'WPn4qfQxOcBknA111YGDB1i8CIftXGKDnmUDmgSlcbsHc110';
+    process.env.APPLITOOLS_API_KEY = ApplitoolsConfig.APPLITOOLS_API_KEY;
+    process.env.APPLITOOLS_SERVER_URL = ApplitoolsConfig.APPLITOOLS_SERVER_URL;
+
     Runner = new ClassicRunner();
     Config = new Configuration();
     eyes = new Eyes(Runner, Config);
@@ -18,12 +20,13 @@ test.beforeAll(async() => {
 test.describe('Exact match case - Bank Dashboard Visual Tests', () => {
     test.beforeEach(async ({ page }) => {
         // Open Eyes for the test
-        await eyes.open(page, BatchInfoLocal.appName, `Bank Dashboard Exact Match Test`);
+        //await eyes.open(page, BatchInfoLocal.appName, `Bank Dashboard Exact Match Test`);
     });
     /*
     AT Link Match - https://eyes.applitools.com/app/test-results/00000251676821522068/?accountId=l9D0456laE6IwyZgopBlJg__
     */
     test('Negative: Exact Match Test - Bank Dashboard', async ({ page }) => {
+        await eyes.open(page, BatchInfoLocal.appName, `Negative: Bank Dashboard Exact Match Test`);
         await page.goto('https://sandbox.applitools.com/bank/dashboard?layoutAlgo=true');
         await page.waitForTimeout(3000);
 
@@ -36,7 +39,8 @@ test.describe('Exact match case - Bank Dashboard Visual Tests', () => {
     /*
     AT Link Match - https://eyes.applitools.com/app/test-results/00000251676822103766/?accountId=l9D0456laE6IwyZgopBlJg__
     */
-    test.skip('Positive: Exact Match Test - Dashboard Overview Header', async ({ page }) => {
+    test('Positive: Exact Match Test - Dashboard Overview Header', async ({ page }) => {
+        await eyes.open(page, BatchInfoLocal.appName, `Positive: Bank Dashboard Exact Match Test`);
         await page.goto('https://sandbox.applitools.com/bank/dashboard?layoutAlgo=true');
         await page.waitForTimeout(3000);
 
