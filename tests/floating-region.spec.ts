@@ -1,6 +1,6 @@
 import { test } from '@playwright/test';
 import { BatchInfoLocal } from '../src/batch-info';
-import { BatchInfo, Configuration, EyesRunner, VisualGridRunner, BrowserType, DeviceName, ScreenOrientation, Eyes, Target, ClassicRunner } from '@applitools/eyes-playwright';
+import { BatchInfo, Configuration, EyesRunner, FloatingMatchSettings, Region,VisualGridRunner, BrowserType, DeviceName, ScreenOrientation, Eyes, Target, ClassicRunner } from '@applitools/eyes-playwright';
 import { generateUUID } from '../src/utils/uuid';
 
 export let Batch: BatchInfo;
@@ -9,39 +9,30 @@ export let Runner: EyesRunner;
 export let eyes: Eyes;
 
 test.beforeAll(async() => {
-
-    // Configure Applitools SDK to run on the Ultrafast Grid
-    Runner = new VisualGridRunner({ testConcurrency: 5 });
-    //Batch = new BatchInfo({name: BatchInfoLocal.name});
-
+    process.env.APPLITOOLS_API_KEY = 'WPn4qfQxOcBknA111YGDB1i8CIftXGKDnmUDmgSlcbsHc110';
+    Runner = new ClassicRunner();
     Config = new Configuration();
-    //Config.setBatch(Batch);
-
-    Config.addBrowsers(
-        { name: BrowserType.CHROME, width: 1600, height: 600 }
-    )
     eyes = new Eyes(Runner, Config);
 });
 
-test.describe('Test to demonstrate ignore color & text during comparision', () => {
-    //let eyes: Eyes;
+test.describe('This test is to demonstrate floating region', () => {
     test.beforeEach(async ({ page }) => {
-        await eyes.open(page, BatchInfoLocal.appName, `Test to demonstrate ignore color & text during comparision`, { width: 1500, height: 600 });
+        await eyes.open(page, BatchInfoLocal.appName, 'Test to demonstrate floating region');
     });
     
 
-    // test('Ignore color differences', async ({ page }) => {
-    //     await page.goto('https://coinmarketcap.com/');
-    //     await page.waitForTimeout(3000);
+    // AT link match - https://eyes.applitools.com/app/test-results/00000251676818726101/?accountId=l9D0456laE6IwyZgopBlJg__
+    // https://applitools.com/tutorials/guides/advanced-use-cases/match-levels-&-regions
 
-    //     //await page.locator('span.icon-Moon').click();
+      test('Demonstrate Floating Region', async ({ page }) => {
+        await page.goto('http://sandbox.applitools.com/bank?floatRegion=true');
 
-    //     // Full Page - Visual AI Assertion
-    //     await eyes.check('Ignore color differences', Target.region('div.sc-7927fd90-0.ghpzpe')
-    //     .ignoreColors()
-        
-    //     );
-    // });
+        await eyes.check('Demonstrate Floating Region', 
+            Target
+              .window()
+              .floatingRegion('.loginForm_loginFormLogo__wweIT > a:nth-child(1) > svg:nth-child(1)', 250, 10, 80, 10) 
+          )
+    });
 
     test.afterEach(async () => {
         // End Applitools Visual AI Test
