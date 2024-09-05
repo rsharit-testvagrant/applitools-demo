@@ -13,8 +13,12 @@ test.beforeAll(async() => {
     Config = new Configuration();
     eyes = new Eyes(Runner, Config);
 });
-
-test.describe('This test is to demonstrate the ignore a particular region considering '+
+/**
+ * https://applitools.com/tutorials/guides/advanced-use-cases/match-levels-&-regions#ignore-regions
+ * Ignore regions should only be used as a last resort and most cases can be handled by Layout regions or Ignore Colors regions.
+ * or as per your use case
+ */
+test.describe('This test is to demonstrate to ignore a particular region considering '+
     'the comparison with baseline.', () => {
     test.beforeEach(async ({ page }) => {
         await eyes.open(page, BatchInfoLocal.appName, 'Test to demonstrate ignore region');
