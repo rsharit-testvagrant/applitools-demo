@@ -1,5 +1,5 @@
 import { test } from '@playwright/test';
-import { ApplitoolsConfig, BatchInfoLocal } from '../src/batch-info';
+import { ApplitoolsConfig, TVBatchInfo } from '../src/batch-info';
 import { BatchInfo, Configuration, EyesRunner, VisualGridRunner, BrowserType, DeviceName, ScreenOrientation, Eyes, Target, ClassicRunner } from '@applitools/eyes-playwright';
 import { generateUUID } from '../src/utils/uuid';
 
@@ -13,7 +13,9 @@ test.beforeAll(async() => {
     process.env.APPLITOOLS_SERVER_URL = ApplitoolsConfig.APPLITOOLS_SERVER_URL;
 
     Runner = new ClassicRunner();
+    Batch = new BatchInfo({name: TVBatchInfo.name});
     Config = new Configuration();
+    Config.setBatch(Batch)
     eyes = new Eyes(Runner, Config);
 });
 
@@ -23,7 +25,7 @@ test.beforeAll(async() => {
 test.describe('this test is to demonstrate match type of layout applied on the page. It checks for various elements, ' + 
     'checks for their relative positions to each other.', () => {
     test.beforeEach(async ({ page }) => {
-        await eyes.open(page, BatchInfoLocal.appName, `Test to demonstrate layout match`);
+        await eyes.open(page, TVBatchInfo.appName, `Test to demonstrate layout match`);
     });
     
 
@@ -31,7 +33,7 @@ test.describe('this test is to demonstrate match type of layout applied on the p
     // AT link  yet to be resolved - https://eyes.applitools.com/app/test-results/00000251676931163592/?accountId=l9D0456laE6IwyZgopBlJg__
     test('Layout match test', async ({ page }) => {
         await page.goto('https://coinmarketcap.com/');
-        await page.waitForTimeout(3000);
+        await page.waitForTimeout(19000);
 
         // asking eyes to check for layout of the page
         await eyes.check('Test to demonstrate layout match', Target.window()

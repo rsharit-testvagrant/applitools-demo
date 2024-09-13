@@ -1,5 +1,5 @@
 import { test } from '@playwright/test';
-import { ApplitoolsConfig, BatchInfoLocal } from '../src/batch-info';
+import { ApplitoolsConfig, TVBatchInfo } from '../src/batch-info';
 import { BatchInfo, Configuration, EyesRunner, VisualGridRunner, BrowserType, DeviceName, ScreenOrientation, Eyes, Target, ClassicRunner } from '@applitools/eyes-playwright';
 import { generateUUID } from '../src/utils/uuid';
 
@@ -11,27 +11,30 @@ export let eyes: Eyes;
 test.beforeAll(async() => {
     process.env.APPLITOOLS_API_KEY = ApplitoolsConfig.APPLITOOLS_API_KEY;
     process.env.APPLITOOLS_SERVER_URL = ApplitoolsConfig.APPLITOOLS_SERVER_URL;
+
     Runner = new ClassicRunner();
     Config = new Configuration();
     eyes = new Eyes(Runner, Config);
 });
 
-    test.describe('Content region A few home page tests', () => {
-        test.beforeEach(async ({ page }) => {
-            await eyes.open(page, BatchInfoLocal.appName, `Test to demonstrate content region`);
-        });
+/**
+ * https://applitools.com/docs/api-ref/sdk-api/playwright/javascript/checksettings#layoutregions-method
+ */
+test.describe('This test is to demonstrate layout region capability. ' + 
+    'This ensures layout functionality within a particular element of the page.', () => {
+    test.beforeEach(async ({ page }) => {
+        await eyes.open(page, TVBatchInfo.appName, `Test to demonstrate Layout Region`);
+    });
+    
 
-/*  https://ultimateqa.com/applitools-ignore-regions-2/
-    AT Link Mismatch - https://eyes.applitools.com/app/test-results/00000251676821257211/?accountId=l9D0456laE6IwyZgopBlJg__
-*/
-    test('Test to demonstrate Content Region', async ({ page }) => {
+    test('Test to demonstrate Layout Region', async ({ page }) => {
         await page.goto('https://coinmarketcap.com/');
-        await page.waitForTimeout(3000);
+        await page.waitForTimeout(10000);
 
-        // asking eyes to focus on particular region while comparing with the baseline
-        await eyes.check('Test to demonstrate Content Region', 
-            Target.window()
-                .contentRegion('h1>span[dir="auto"]') 
+        // asking the eye to check the layout of given region
+        await eyes.check('Test to demonstrate Layout Region', Target.window()
+        .layoutRegion('div.sc-c50d2aab-9.sc-c50d2aab-12.glmmxK.jpSSgp')
+        .layout()
         );
     });
 
@@ -41,6 +44,7 @@ test.beforeAll(async() => {
 });
 
 test.afterAll(async() => {
+    // Wait for Ultrast Grid Renders to finish and gather results
     const results = await Runner.getAllTestResults();
     console.log('Visual test results', results.getAllResults());
 });

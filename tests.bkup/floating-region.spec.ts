@@ -1,5 +1,5 @@
 import { test } from '@playwright/test';
-import { ApplitoolsConfig, BatchInfoLocal } from '../src/batch-info';
+import { ApplitoolsConfig, TVBatchInfo } from '../src/batch-info';
 import { BatchInfo, Configuration, EyesRunner, FloatingMatchSettings, Region,VisualGridRunner, BrowserType, DeviceName, ScreenOrientation, Eyes, Target, ClassicRunner } from '@applitools/eyes-playwright';
 import { generateUUID } from '../src/utils/uuid';
 
@@ -18,7 +18,7 @@ test.beforeAll(async() => {
 
 test.describe('This test is to demonstrate floating region', () => {
     test.beforeEach(async ({ page }) => {
-        await eyes.open(page, BatchInfoLocal.appName, 'Test to demonstrate floating region');
+        await eyes.open(page, TVBatchInfo.appName, 'Test to demonstrate floating region');
     });
     
 

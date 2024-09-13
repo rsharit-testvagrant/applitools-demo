@@ -1,17 +1,23 @@
 import { test } from '@playwright/test';
-import { ApplitoolsConfig, CloseEyesBatch, TVBatchInfo, TV_Eyes } from '../src/batch-info';
+import { ApplitoolsConfig, TVBatchInfo } from '../src/batch-info';
 import { BatchInfo, Configuration, EyesRunner, VisualGridRunner, BrowserType, DeviceName, ScreenOrientation, Eyes, Target, ClassicRunner } from '@applitools/eyes-playwright';
 import { generateUUID } from '../src/utils/uuid';
 
-let eyesInstance: Eyes; 
-let runnerInstance: ClassicRunner|EyesRunner;
+export let Batch: BatchInfo;
+export let Config: Configuration;
+export let Runner: EyesRunner;
+export let eyes: Eyes;
 
 test.beforeAll(async() => {
-    const tvEyes = TV_Eyes();
-    eyesInstance = tvEyes.eyesInstance;
-    runnerInstance = tvEyes.runnerInstance;
+    process.env.APPLITOOLS_API_KEY = ApplitoolsConfig.APPLITOOLS_API_KEY;
+    process.env.APPLITOOLS_SERVER_URL = ApplitoolsConfig.APPLITOOLS_SERVER_URL;
+    
+    Runner = new ClassicRunner();
+    Batch = new BatchInfo({name: TVBatchInfo.name});
+    Config = new Configuration();
+    Config.setBatch(Batch)
+    eyes = new Eyes(Runner, Config);
 });
-
 /**
  * https://applitools.com/tutorials/guides/advanced-use-cases/match-levels-&-regions#ignore-regions
  * Ignore regions should only be used as a last resort and most cases can be handled by Layout regions or Ignore Colors regions.
@@ -20,7 +26,7 @@ test.beforeAll(async() => {
 test.describe('This test is to demonstrate to ignore a particular region considering '+
     'the comparison with baseline.', () => {
     test.beforeEach(async ({ page }) => {
-        await eyesInstance.open(page, TVBatchInfo.appName, 'Test to demonstrate ignore region');
+        await eyes.open(page, TVBatchInfo.appName, 'Test to demonstrate ignore region');
     });
     
 
@@ -31,18 +37,17 @@ test.describe('This test is to demonstrate to ignore a particular region conside
         await page.waitForTimeout(1000);
 
         // asking eyes to ignore the region while comparing with the baseline
-        await eyesInstance.check('Test to demonstrate ignore region', Target.region('[data-test="section-chart"]')
+        await eyes.check('Test to demonstrate ignore region', Target.region('[data-test="section-chart"]')
         .ignoreRegion('rect.highcharts-background') 
         );
     });
 
     test.afterEach(async () => {
-        await eyesInstance.closeAsync();
+        await eyes.closeAsync();
     });
 });
 
 test.afterAll(async() => {
-    const results = await runnerInstance.getAllTestResults();
+    const results = await Runner.getAllTestResults();
     console.log('Visual test results', results.getAllResults());
-    //await CloseEyesBatch();
 });

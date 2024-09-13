@@ -1,5 +1,5 @@
 import { test } from '@playwright/test';
-import { BatchInfoLocal, ApplitoolsConfig } from '../src/batch-info';
+import { TVBatchInfo, ApplitoolsConfig } from '../src/batch-info';
 import { BatchInfo, Configuration, EyesRunner, VisualGridRunner, BrowserType, DeviceName, ScreenOrientation, Eyes, Target, ClassicRunner } from '@applitools/eyes-playwright';
 import { generateUUID } from '../src/utils/uuid';
 
@@ -26,7 +26,7 @@ test.describe('Exact match case - Bank Dashboard Visual Tests', () => {
     AT Link Match - https://eyes.applitools.com/app/test-results/00000251676821522068/?accountId=l9D0456laE6IwyZgopBlJg__
     */
     test('Negative: Exact Match Test - Bank Dashboard', async ({ page }) => {
-        await eyes.open(page, BatchInfoLocal.appName, `Negative: Bank Dashboard Exact Match Test`);
+        await eyes.open(page, TVBatchInfo.appName, `Negative: Bank Dashboard Exact Match Test`);
         await page.goto('https://sandbox.applitools.com/bank/dashboard?layoutAlgo=true');
         await page.waitForTimeout(3000);
 
